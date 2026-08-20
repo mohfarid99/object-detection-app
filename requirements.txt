@@ -1,0 +1,11 @@
+# Web layer
+fastapi>=0.110
+uvicorn[standard]>=0.27
+python-multipart>=0.0.9
+
+# Detection stack (YOLO12 ships with ultralytics >= 8.3.63)
+ultralytics>=8.3.78
+opencv-python>=4.9.0.80
+torch>=2.2
+torchvision>=0.17
+numpy>=1.24
