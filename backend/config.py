@@ -13,20 +13,76 @@ OUTPUT_DIR = Path(os.getenv("ODA_OUTPUT_DIR", ROOT / "storage" / "outputs"))
 for _d in (MODELS_DIR, UPLOAD_DIR, OUTPUT_DIR):
     _d.mkdir(parents=True, exist_ok=True)
 
-# YOLO12 pretrained detection checkpoints (COCO, 80 classes). Ultralytics pulls
-# these from the GitHub release assets the first time they are requested.
+# Pretrained detection checkpoints (COCO, 80 classes). Ultralytics pulls these
+# from the GitHub release assets the first time they are requested.
+# YOLO26 runs end-to-end (NMS-free), so the IoU/NMS threshold does not apply to
+# it; YOLO12 uses the classic NMS head.
 MODEL_CATALOG = [
+    {
+        "id": "yolo26n",
+        "file": "yolo26n.pt",
+        "family": "YOLO26",
+        "nms_free": True,
+        "label": "YOLO26n — Nano",
+        "params": "2.4M",
+        "map": "40.9",
+        "note": "Newest generation. Fastest, and the best pick for live webcam.",
+    },
+    {
+        "id": "yolo26s",
+        "file": "yolo26s.pt",
+        "family": "YOLO26",
+        "nms_free": True,
+        "label": "YOLO26s — Small",
+        "params": "9.5M",
+        "map": "48.6",
+        "note": "Speed/accuracy balance, a step up on YOLO12s.",
+    },
+    {
+        "id": "yolo26m",
+        "file": "yolo26m.pt",
+        "family": "YOLO26",
+        "nms_free": True,
+        "label": "YOLO26m — Medium",
+        "params": "20.4M",
+        "map": "53.1",
+        "note": "More accurate, noticeably slower on CPU.",
+    },
+    {
+        "id": "yolo26l",
+        "file": "yolo26l.pt",
+        "family": "YOLO26",
+        "nms_free": True,
+        "label": "YOLO26l — Large",
+        "params": "24.8M",
+        "map": "55.0",
+        "note": "Heavy. Recommended only with a GPU.",
+    },
+    {
+        "id": "yolo26x",
+        "file": "yolo26x.pt",
+        "family": "YOLO26",
+        "nms_free": True,
+        "label": "YOLO26x — Extra large",
+        "params": "55.7M",
+        "map": "57.5",
+        "note": "Highest accuracy here, slowest. GPU strongly advised.",
+    },
     {
         "id": "yolo12n",
         "file": "yolo12n.pt",
+        "family": "YOLO12",
+        "nms_free": False,
         "label": "YOLO12n — Nano",
         "params": "2.6M",
         "map": "40.6",
-        "note": "Fastest. Best choice for live webcam detection.",
+        "note": "Fastest YOLO12. Good choice for live webcam detection.",
     },
     {
         "id": "yolo12s",
         "file": "yolo12s.pt",
+        "family": "YOLO12",
+        "nms_free": False,
         "label": "YOLO12s — Small",
         "params": "9.3M",
         "map": "48.0",
@@ -35,6 +91,8 @@ MODEL_CATALOG = [
     {
         "id": "yolo12m",
         "file": "yolo12m.pt",
+        "family": "YOLO12",
+        "nms_free": False,
         "label": "YOLO12m — Medium",
         "params": "20.2M",
         "map": "52.5",
@@ -43,6 +101,8 @@ MODEL_CATALOG = [
     {
         "id": "yolo12l",
         "file": "yolo12l.pt",
+        "family": "YOLO12",
+        "nms_free": False,
         "label": "YOLO12l — Large",
         "params": "26.4M",
         "map": "53.7",
@@ -51,14 +111,17 @@ MODEL_CATALOG = [
     {
         "id": "yolo12x",
         "file": "yolo12x.pt",
+        "family": "YOLO12",
+        "nms_free": False,
         "label": "YOLO12x — Extra large",
         "params": "59.1M",
         "map": "55.2",
-        "note": "Highest accuracy, slowest. GPU strongly advised.",
+        "note": "Highest accuracy in YOLO12, slowest. GPU strongly advised.",
     },
 ]
 
 MODELS_BY_ID = {m["id"]: m for m in MODEL_CATALOG}
+MODEL_FAMILIES = ["YOLO26", "YOLO12"]
 DEFAULT_MODEL_ID = "yolo12n"
 
 MAX_UPLOAD_BYTES = int(os.getenv("ODA_MAX_UPLOAD_MB", "512")) * 1024 * 1024

@@ -2,16 +2,16 @@
   <img src="static/logo.png" alt="Ubaya AI Center" width="420" />
 </p>
 
-# YOLO12 Object Detection Web App
+# YOLO Object Detection Web App
 
 A web app from **Ubaya AI Center** for detecting objects in an uploaded video or
-live from a webcam, powered by Ultralytics **YOLO12** with pretrained COCO
-weights. There is no training step — the checkpoint is downloaded automatically
-the first time you select a model.
+live from a webcam, powered by Ultralytics **YOLO26** and **YOLO12** with
+pretrained COCO weights. There is no training step — the checkpoint is
+downloaded automatically the first time you select a model.
 
 - **Upload a video** → annotated MP4 with boxes and labels, played back in the page and downloadable.
 - **Live webcam** → frames stream to the server over a websocket, boxes are drawn on a canvas overlay in real time.
-- **Choose the model** — YOLO12n / s / m / l / x — plus confidence, IoU, inference size, frame stride, class filter, and optional ByteTrack object IDs.
+- **Choose the model** — YOLO26 or YOLO12, in five sizes each (n / s / m / l / x) — plus confidence, IoU, inference size, frame stride, class filter, and optional ByteTrack object IDs.
 - Uses NVIDIA CUDA or Apple GPU (MPS) automatically, falls back to CPU.
 
 ---
@@ -144,13 +144,31 @@ do. Settings apply immediately, with no restart.
 
 ### Models
 
+Both families are pretrained on COCO (80 classes) and selectable from the
+sidebar. **YOLO26** is the newer generation: it predicts end-to-end (NMS-free),
+so it is faster at the same size and the IoU/NMS slider does not apply — the app
+greys it out automatically when a YOLO26 model is selected.
+
 | Model | Params | mAP<sup>50-95</sup> | Notes |
 |-------|--------|------|-------|
-| yolo12n | 2.6M | 40.6 | fastest, best for live webcam |
+| yolo26n | 2.4M | 40.9 | fastest overall, best for live webcam |
+| yolo26s | 9.5M | 48.6 | balanced |
+| yolo26m | 20.4M | 53.1 | slower on CPU |
+| yolo26l | 24.8M | 55.0 | GPU recommended |
+| yolo26x | 55.7M | 57.5 | most accurate, slowest |
+| yolo12n | 2.6M | 40.6 | fastest YOLO12 |
 | yolo12s | 9.3M | 48.0 | balanced |
 | yolo12m | 20.2M | 52.5 | slower on CPU |
 | yolo12l | 26.4M | 53.7 | GPU recommended |
-| yolo12x | 59.1M | 55.2 | slowest / most accurate |
+| yolo12x | 59.1M | 55.2 | most accurate in YOLO12 |
+
+Measured on this project's test clip (Apple M-series, MPS, 640 px): yolo26n
+processed video at **25 fps** versus **14 fps** for yolo12n, and ~23 ms versus
+~31 ms per webcam frame.
+
+The default on load is `yolo12n`; change `DEFAULT_MODEL_ID` in
+[backend/config.py](backend/config.py) to start on a different one, or open the
+app with `?model=yolo26n` to preselect it.
 
 Weights are stored in `models/`. *Download / warm up model* in the sidebar
 fetches and pre-loads one so the first frame isn't slow.
@@ -194,7 +212,8 @@ run.bat         launcher for Windows
 | Camera button does nothing | open the app via `localhost`, not a LAN IP; check the browser's camera permission |
 | First detection is slow | the checkpoint is downloading — use *Download / warm up model* once |
 | “Could not read this video file” | the codec isn't supported by OpenCV; re-save as MP4 (H.264) and retry |
-| Very slow on CPU | pick **yolo12n**, inference size 320–480, and “detect every 2nd/3rd frame” |
+| Very slow on CPU | pick **yolo26n**, inference size 320–480, and “detect every 2nd/3rd frame” |
+| IoU slider greyed out | expected on YOLO26 — it is NMS-free, so there is no NMS threshold to set |
 | Model download blocked | corporate firewall; download the `.pt` from the Ultralytics GitHub releases and drop it in `models/` |
 
 ## Notes
@@ -208,4 +227,4 @@ run.bat         launcher for Windows
 
 ---
 
-<sub>Built for Ubaya AI Center · detection by [Ultralytics YOLO12](https://docs.ultralytics.com/models/yolo12/)</sub>
+<sub>Built for Ubaya AI Center · detection by [Ultralytics YOLO26](https://docs.ultralytics.com/models/yolo26/) / [YOLO12](https://docs.ultralytics.com/models/yolo12/)</sub>

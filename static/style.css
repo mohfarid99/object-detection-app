@@ -203,3 +203,7 @@ input[type="range"]::-moz-range-thumb {
   width: 14px; height: 14px; border-radius: 50%;
   background: var(--brand-2); border: 2px solid #fff; cursor: pointer;
 }
+
+/* A setting that does not apply to the selected model. */
+.field.disabled { opacity: .45; }
+.field.disabled input { cursor: not-allowed; }

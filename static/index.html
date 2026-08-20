@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Ubaya AI Center · YOLO12 Object Detection</title>
+<title>Ubaya AI Center · YOLO Object Detection</title>
 <link rel="icon" type="image/png" href="/static/logo.png" />
 <link rel="stylesheet" href="/static/style.css" />
 </head>
@@ -13,8 +13,8 @@
     <img class="logo" src="/static/logo.png" alt="Ubaya AI Center" />
     <span class="brand-divider"></span>
     <div>
-      <h1>YOLO12 Object Detection</h1>
-      <p>Upload a video or run your webcam live — pretrained COCO weights, no training needed.</p>
+      <h1>YOLO Object Detection</h1>
+      <p>YOLO26 and YOLO12 · upload a video or run your webcam live — pretrained COCO weights, no training needed.</p>
     </div>
   </div>
   <div class="badges">
@@ -28,7 +28,7 @@
     <h2>Detection settings</h2>
 
     <label class="field">
-      <span>YOLO12 model</span>
+      <span>Model</span>
       <select id="modelSelect"></select>
       <small id="modelNote"></small>
     </label>
@@ -39,9 +39,10 @@
       <input type="range" id="conf" min="0.05" max="0.95" step="0.05" value="0.25" />
     </label>
 
-    <label class="field">
+    <label class="field" id="iouField">
       <span>IoU / NMS <b id="iouVal">0.45</b></span>
       <input type="range" id="iou" min="0.1" max="0.95" step="0.05" value="0.45" />
+      <small id="iouHint"></small>
     </label>
 
     <label class="field">
@@ -148,7 +149,7 @@
 </main>
 
 <footer class="foot">
-  <b>Ubaya AI Center</b> · Ultralytics YOLO12 · pretrained COCO weights · <span id="footDevice"></span>
+  <b>Ubaya AI Center</b> · Ultralytics YOLO26 / YOLO12 · pretrained COCO weights · <span id="footDevice"></span>
 </footer>
 
 <script src="/static/app.js"></script>

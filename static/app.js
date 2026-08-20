@@ -43,14 +43,23 @@ async function loadMeta() {
 
   const sel = $("modelSelect");
   sel.innerHTML = "";
-  meta.models.forEach((m) => {
-    const opt = document.createElement("option");
-    opt.value = m.id;
-    opt.textContent = `${m.label}${m.downloaded ? " ✓" : " ⤓"}`;
-    opt.dataset.note = `${m.params} params · mAP ${m.map} · ${m.note}${m.downloaded ? "" : " (downloads on first use)"}`;
-    sel.appendChild(opt);
+  (meta.families || [...new Set(meta.models.map((m) => m.family))]).forEach((family) => {
+    const group = document.createElement("optgroup");
+    const nmsFree = meta.models.some((m) => m.family === family && m.nms_free);
+    group.label = nmsFree ? `${family} — newest, NMS-free` : family;
+    meta.models.filter((m) => m.family === family).forEach((m) => {
+      const opt = document.createElement("option");
+      opt.value = m.id;
+      opt.textContent = `${m.label}${m.downloaded ? " ✓" : " ⤓"}`;
+      opt.dataset.note = `${m.params} params · mAP ${m.map} · ${m.note}${m.downloaded ? "" : " (downloads on first use)"}`;
+      opt.dataset.nmsFree = m.nms_free ? "1" : "";
+      group.appendChild(opt);
+    });
+    sel.appendChild(group);
   });
-  sel.value = meta.default_model;
+  // ?model=yolo26s preselects a model, otherwise fall back to the default.
+  const wanted = new URLSearchParams(location.search).get("model");
+  sel.value = meta.models.some((m) => m.id === wanted) ? wanted : meta.default_model;
   updateModelNote();
 
   $("deviceBadge").textContent = `Running on ${meta.device}`;
@@ -62,6 +71,12 @@ function updateModelNote() {
   const opt = $("modelSelect").selectedOptions[0];
   $("modelNote").textContent = opt ? opt.dataset.note : "";
   $("modelBadge").textContent = opt ? opt.textContent.replace(/[✓⤓]\s*$/, "").trim() : "";
+
+  // YOLO26 predicts end-to-end, so there is no NMS step to threshold.
+  const nmsFree = !!(opt && opt.dataset.nmsFree);
+  $("iou").disabled = nmsFree;
+  $("iouField").classList.toggle("disabled", nmsFree);
+  $("iouHint").textContent = nmsFree ? "not used — this model is NMS-free" : "";
 }
 
 function buildClassList() {

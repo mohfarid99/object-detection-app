@@ -58,6 +58,7 @@ async def meta():
             {**m, "downloaded": detector.is_downloaded(m["id"]), "loaded": m["id"] in detector.loaded_ids()}
             for m in config.MODEL_CATALOG
         ],
+        "families": config.MODEL_FAMILIES,
         "default_model": config.DEFAULT_MODEL_ID,
         "device": detector.device_label(),
         "classes": COCO_NAMES,
